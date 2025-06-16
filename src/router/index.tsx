@@ -14,7 +14,7 @@ import RegisterPage from "../Pages/RegisterPage";
 import CartItemPage from "../Pages/CartItemPage";
 import ProductDetailsPage from "../Pages/ProductDetailsPage";
 import CookieServices from "../services/CookieServices";
-import MainDashPage from "../Pages/Dashboard/MainDashPage";
+import MainDashPage from "../Pages/Dashboard/LayoutDash";
 import ProductDashboard from "../Pages/Dashboard/ProductDashboard";
 import DashboardPage from "../Pages/Dashboard/DashboardPage";
 const user = CookieServices.get("user");

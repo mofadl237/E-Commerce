@@ -57,9 +57,10 @@ const LoginSlice = createSlice({
           duration: 3000,
           isClosable: true,
         });
-        const date =new Date();
-        date.setTime(date.getTime()+ (1000 * 60 *60*24*2))
-        const options = {path:'/',expires:date};
+        // const date =new Date();
+        // date.setTime(date.getTime()+ (1000 * 60 *60*24*2))
+        // const options = {path:'/',expires:date};//فعلا اتقفل بعد يومين من نفسه م مهم تعمله وانت بتدرب بقا انت فاهم الفكره
+        const options = {path:'/'};
         CookieServices.set('user', JSON.stringify(state.data) ,options)
 
         setTimeout(() => {
