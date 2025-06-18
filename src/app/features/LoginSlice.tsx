@@ -49,7 +49,6 @@ const LoginSlice = createSlice({
       .addCase(userLogin.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload;
-        console.log("state.data =", JSON.stringify(state.data, null, 2));
         toast({
           title: 'Success Login',
           description: "Navigate To LoginPage",
@@ -60,7 +59,7 @@ const LoginSlice = createSlice({
         // const date =new Date();
         // date.setTime(date.getTime()+ (1000 * 60 *60*24*2))
         // const options = {path:'/',expires:date};//فعلا اتقفل بعد يومين من نفسه م مهم تعمله وانت بتدرب بقا انت فاهم الفكره
-        const options = {path:'/'};
+        const options = {path:'/',expires: new Date('2035-01-01')};
         CookieServices.set('user', JSON.stringify(state.data) ,options)
 
         setTimeout(() => {

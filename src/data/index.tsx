@@ -74,5 +74,9 @@ export const ModalInputData: IInputModal[] = [
     name: "thumbnail",
     type: "text",
   },
-  
 ];
+export const SelectCategoryData:string[]=[
+    'smartPhones',
+    'camera',
+    'laptop',
+]

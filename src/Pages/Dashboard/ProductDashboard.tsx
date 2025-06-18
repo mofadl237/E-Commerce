@@ -1,7 +1,7 @@
 import { useGetProductFetchQuery } from "../../app/Services/GetProductDash"
-import TableProduct from "../../components/TableProduct";
 import TableSkelton from "../../components/TableSkelton"
 import ErrorHandler from "../../Error/ErrorHandler";
+import TableProduct from './../../components/TableProduct';
 
 
 const ProductDashboard = () => {

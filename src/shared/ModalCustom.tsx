@@ -21,8 +21,9 @@ interface IProps {
   okTxt?:string;
   cancelTxt?:string;
   okFunction:()=>void;
+  isLoading:boolean;
 }
-const ModalCustom = ({ isOpen, onClose ,finalRef,initialRef,okFunction , title, children, cancelTxt='Cancel',okTxt='Done'}: IProps) => {
+const ModalCustom = ({ isOpen, onClose ,finalRef,initialRef,okFunction , title, children, cancelTxt='Cancel',okTxt='Done',isLoading}: IProps) => {
   return (
     <div>
       <Modal
@@ -40,7 +41,7 @@ const ModalCustom = ({ isOpen, onClose ,finalRef,initialRef,okFunction , title, 
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={okFunction}>
+            <Button colorScheme="blue" mr={3} onClick={okFunction} isLoading={isLoading}>
               {okTxt}
             </Button>
             <Button onClick={onClose}>{cancelTxt}</Button>

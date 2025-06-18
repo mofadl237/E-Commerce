@@ -1,12 +1,9 @@
-
-
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { IPagination, IProduct } from "../../interface";
+import type { IPagination, IProduct, IProductUpdate } from "../../interface";
 import CookieServices from "../../services/CookieServices";
 
 type ProductResponse = { data: IProduct[]; meta?: IPagination };
-const {jwt} = CookieServices.get('user') ;
+
 export const apiSlice = createApi({
   refetchOnReconnect: true,
   refetchOnMountOrArgChange: true,
@@ -38,10 +35,28 @@ export const apiSlice = createApi({
         url: `/products/${documentId}`,
         method: "DELETE",
         headers: {
-      Authorization: `Bearer ${jwt}`
-    },
+          Authorization: `Bearer ${CookieServices.get("user").jwt}`,
+        },
       }),
       invalidatesTags: (_result, _error, documentId) => [
+        { type: "Product", id: documentId },
+        { type: "Product", id: "LIST" },
+      ],
+    }),
+
+    updateProductDash: build.mutation<
+      void,
+      { documentId: string; formData:IProductUpdate }
+    >({
+      query: ({ documentId, formData }) => ({
+        url: `/products/${documentId}`,
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${CookieServices.get("user").jwt}`,
+        },
+        body: {data:formData},
+      }),
+      invalidatesTags: (_result, _error, { documentId }) => [
         { type: "Product", id: documentId },
         { type: "Product", id: "LIST" },
       ],
@@ -54,4 +69,5 @@ export default apiSlice.reducer;
 export const {
   useGetProductFetchQuery,
   useDeleteProductDashMutation,
+  useUpdateProductDashMutation,
 } = apiSlice;

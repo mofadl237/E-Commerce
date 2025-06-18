@@ -8,16 +8,22 @@ import {
   Box,
   Flex,
   useDisclosure,
-  Input,
   Img,
 } from "@chakra-ui/react";
-import { initialProduct, type IProduct } from "../interface";
+import {
+  initialProduct,
+  type IProduct,
+  type IProductUpdate,
+} from "../interface";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import AlertDialogComponent from "../shared/AlertDialog";
 import { useEffect, useRef, useState, type ChangeEvent } from "react";
-import { useDeleteProductDashMutation } from "../app/Services/GetProductDash";
+import {
+  useDeleteProductDashMutation,
+  useUpdateProductDashMutation,
+} from "../app/Services/GetProductDash";
 import ModalCustom from "../shared/ModalCustom";
-import { ModalInputData } from "../data";
+import FormToModal from "../shared/FormToModal";
 interface IProps {
   products: IProduct[];
 }
@@ -26,9 +32,12 @@ const TableProduct = ({ products }: IProps) => {
   const [tempDocumentID, setTempDocumentId] = useState("");
   const [tempProduct, setTempProduct] = useState<IProduct>(initialProduct);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  //const [thumbnail, setThumbnail] = useState<File | null>(null);
   const cancelRef = useRef<HTMLButtonElement>(null);
   const [deleteProduct, { isLoading, isSuccess }] =
     useDeleteProductDashMutation();
+  const [updateProduct, { isLoading: isLoadingUpdate }] =
+    useUpdateProductDashMutation();
 
   //For Modal
   const initialRefEdit = useRef(null);
@@ -42,17 +51,86 @@ const TableProduct = ({ products }: IProps) => {
   const HandleDeleteProduct = () => {
     deleteProduct(tempDocumentID);
   };
-  const onChange_Handle_EditModal =(e:ChangeEvent<HTMLInputElement>)=>{
-    const {value , name} = e.target;
-   setTempProduct((prev) =>( {...prev , [name] :value}));
-  }
-  const onSubmit_Handle_Edit = () =>{
-    console.log(tempProduct)
-    //Tomorrow after Went Exam
+  const onChange_Handle_EditModal = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { value, name } = e.target;
+
+    return setTempProduct((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const onChange_Handle_Thumbnail = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    //setThumbnail(file);
+
+    setTempProduct((prev) => ({
+      ...prev,
+      thumbnail: {
+        ...prev.thumbnail,
+        url: file.name,
+      },
+    }));
+  };
+
+  const onChange_Handle_SelectModal = (e: ChangeEvent<HTMLSelectElement>) => {
+    const { value } = e.target;
+    setTempProduct((prev) => ({
+      ...prev,
+      categories: [
+        {
+          ...prev.categories?.[0],
+          title: value,
+        },
+      ],
+    }));
+  };
+  const onSubmit_Handle_Edit = async () => {
+    //     const formData = new FormData();
+    // formData.append(
+    //   "data",
+    //   JSON.stringify({
+    //     title: tempProduct.title,
+    //     description: tempProduct.description,
+    //     price: Number(tempProduct.price),
+    //     stock: Number(tempProduct.stock),
+    //   })
+    // );
+
+    // if (thumbnail) {
+    //   formData.append("files.thumbnail", thumbnail);
+    // }
+    const formData: IProductUpdate = {
+      title: tempProduct.title,
+      description: tempProduct.description,
+      price: Number(tempProduct.price),
+      stock: Number(tempProduct.stock),
+      categories:
+        tempProduct.categories?.map((cat) => ({
+          id: cat.id, // ← الأفضل
+          title: cat.title, // ← إذا كان مطلوبًا
+        })) || [],
+    };
+    console.log("FormData being sent:", formData);
+
+    const { error } = await updateProduct({
+      documentId: tempProduct.documentId,
+      formData,
+    });
+    if (error) console.log(error);
     //1- push New Edit (tempProduct) ==>Slice Edit
+
     //2- action Detect Success Or Fail (Toast)
-    //3- reset temp Product 
-  }
+
+    //3- reset temp Product
+    setTempProduct(initialProduct);
+    //setThumbnail(null);
+    onCloseModal();
+  };
   useEffect(() => {
     if (isSuccess) {
       setTempDocumentId("");
@@ -60,23 +138,24 @@ const TableProduct = ({ products }: IProps) => {
     }
   }, [isSuccess]);
   //3- Render
-  const RenderDataEditModel = ModalInputData.map((input, i) => (
-    <div key={i} className="my-3">
-      <Input
-        name={input.name}
-        type={input.type}
-        placeholder={input.name}
-        onChange={onChange_Handle_EditModal}
-        value={
-          input.name === "categories"
-            ? tempProduct.categories?.[0]?.title || ""
-            : input.name === "thumbnail"
-            ? tempProduct.thumbnail?.url || ""
-            : (tempProduct[input.name as keyof IProduct] as string | number)
-        }
-      />
-    </div>
-  ));
+  // const RenderDataEditModel = ModalInputData.map((input, i) => (
+  //   <div key={i} className="my-3">
+  //     <Input
+  //       name={input.name}
+  //       type={input.type}
+  //       placeholder={input.name}
+  //       onChange={onChange_Handle_EditModal}
+  //       value={
+  //         input.name === "categories"
+  //           ? tempProduct.categories?.[0]?.title
+  //           : input.name === "thumbnail"
+  //           ? tempProduct.thumbnail?.url || ""
+  //           : (tempProduct[input.name as keyof IProduct] as string | number)
+  //       }
+  //     />
+  //   </div>
+  // ));
+  //Replace To Component Form Using Update && Add
   return (
     <>
       <Table size="sm" variant="striped" colorScheme="gray">
@@ -103,8 +182,16 @@ const TableProduct = ({ products }: IProps) => {
                 {product.categories?.[0]?.title || "No Category"}
               </Td>
               <Td textAlign={"center"}>
-                
-                <Img  mx={'auto'} h={10} w={10}  borderRadius={'50%'} src={`${import.meta.env.VITE_SERVER_URL}${product.thumbnail?.url}` }  alt ="No Image" />  
+                <Img
+                  mx={"auto"}
+                  h={10}
+                  w={10}
+                  borderRadius={"50%"}
+                  src={`${import.meta.env.VITE_SERVER_URL}${
+                    product.thumbnail?.url
+                  }`}
+                  alt="No Image"
+                />
               </Td>
               <Td textAlign={"center"}>{product.price}</Td>
               <Td textAlign={"center"}>{product.stock}</Td>
@@ -158,12 +245,26 @@ const TableProduct = ({ products }: IProps) => {
       <ModalCustom
         isOpen={isOpenModal}
         onClose={onCloseModal}
+        isLoading={isLoadingUpdate}
         title="Edit Modal"
         finalRef={finalRefEdit}
         initialRef={initialRefEdit}
         okFunction={onSubmit_Handle_Edit}
       >
-        <form>{RenderDataEditModel}</form>
+        {/* <form>
+          {RenderDataEditModel}
+          <SelectCategory
+            onChange={onChange_Handle_SelectModal}
+            categories={SelectCategoryData}
+            value={tempProduct.categories?.[0].title ?? " "}
+          />
+        </form> */}
+        <FormToModal
+          product={tempProduct}
+          onChange={onChange_Handle_EditModal}
+          onSelect={onChange_Handle_SelectModal}
+          onChangeThumbnail={onChange_Handle_Thumbnail}
+        />
       </ModalCustom>
     </>
   );

@@ -44,8 +44,8 @@ export interface IProduct {
   Quantity?: number;
   categories?:[ 
     {
-      id: string;
-      documentId: string;
+      id?: string;
+      documentId?: string;
       title: string;
     }]
   ;
@@ -95,4 +95,15 @@ export interface IPagination {
   pageSize: number;
   pageCount: number;
   total: number;
+}
+
+export interface IProductUpdate{
+  title:string;
+  description:string;
+  stock:number;
+  price:number;
+ categories: {
+    id?: string;        // ← الأفضل إرسال الـ ID
+    title?: string;     // ← اختياري (إذا كان الخادم يتعامل مع الأسماء)
+  }[];
 }
