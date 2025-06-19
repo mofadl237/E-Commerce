@@ -63,9 +63,13 @@ const removeOne =(product:IProduct)=>{
       >
         <CardBody onClick={() => openProductDetails(objectData)}>
           <Image h={'200px'} w={'full'}
-            src={`${import.meta.env.VITE_SERVER_URL}${
-              objectData.thumbnail.url
-            }`}
+            src={
+              objectData.thumbnail?.url
+                ? `${
+                    objectData.thumbnail.url
+                  }`
+                : "/img/my-1.jpg"
+            }
             alt="Green double couch with wooden legs"
             borderRadius="lg"
           />

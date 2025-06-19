@@ -27,6 +27,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.1",
     "universal-cookie": "^8.0.1",
+    "use-navigator-online": "^3.2.4",
     "yarn": "^1.22.22",
     "yup": "^1.6.1"
   },

@@ -124,7 +124,7 @@ const NavBar = () => {
                     >
                       <Avatar
                         size={"sm"}
-                        src={`${import.meta.env.VITE_SERVER_URL}${urlImage}`}
+                        src={`${urlImage}`}
                       />
                     </MenuButton>
                     <MenuList alignItems={"center"}>
@@ -132,7 +132,7 @@ const NavBar = () => {
                       <Center>
                         <Avatar
                           size={"2xl"}
-                          src={"../../public/img/my-1.jpg"}
+                          src={urlImage}
                         />
                       </Center>
                       <br />
