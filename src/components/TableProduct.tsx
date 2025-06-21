@@ -109,11 +109,6 @@ const TableProduct = ({ products }: IProps) => {
       description: tempProduct.description,
       price: Number(tempProduct.price),
       stock: Number(tempProduct.stock),
-      categories:
-        tempProduct.categories?.map((cat) => ({
-          id: cat.id, // ← الأفضل
-          title: cat.title, // ← إذا كان مطلوبًا
-        })) || [],
     };
     console.log("FormData being sent:", formData);
 
@@ -157,7 +152,7 @@ const TableProduct = ({ products }: IProps) => {
   // ));
   //Replace To Component Form Using Update && Add
   return (
-    <>
+    <Box w="full" overflowX="auto">
       <Table size="sm" variant="striped" colorScheme="gray">
         <Thead>
           <Tr>
@@ -187,9 +182,9 @@ const TableProduct = ({ products }: IProps) => {
                   h={10}
                   w={10}
                   borderRadius={"50%"}
-                  src={`${import.meta.env.VITE_SERVER_URL}${
-                    product.thumbnail?.url
-                  }`}
+                  src={
+                    product.thumbnail?.url ? `${product.thumbnail?.url}`:`/img/my-1.jpg`
+                  }
                   alt="No Image"
                 />
               </Td>
@@ -266,7 +261,7 @@ const TableProduct = ({ products }: IProps) => {
           onChangeThumbnail={onChange_Handle_Thumbnail}
         />
       </ModalCustom>
-    </>
+    </Box>
   );
 };
 

@@ -102,8 +102,4 @@ export interface IProductUpdate{
   description:string;
   stock:number;
   price:number;
- categories: {
-    id?: string;        // ← الأفضل إرسال الـ ID
-    title?: string;     // ← اختياري (إذا كان الخادم يتعامل مع الأسماء)
-  }[];
 }

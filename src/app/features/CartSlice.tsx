@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { IProduct } from "../../interface";
 
 import { createStandaloneToast } from '@chakra-ui/react';
+import CookieServices from "../../services/CookieServices";
 
 // Define a type for the slice state
 interface IInitial {
@@ -49,6 +50,9 @@ export const cartSlice = createSlice({
       const Product = state.product.find(
         (p) => p.id === action.payload.id
       );
+      if(!CookieServices.get('user')){
+        return location.replace('/login');
+      }
 
       if (Product) {
         Product.Quantity = (Product.Quantity || 1) + 1;

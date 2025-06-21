@@ -9,7 +9,7 @@ import axiosInstance from "../config/axiosInstanse";
 import { useNavigate } from "react-router-dom";
 import type { IAxiosError } from "../interface";
 import type { AxiosError } from "axios";
-import { Button, Heading } from "@chakra-ui/react";
+import { Button, createStandaloneToast, Heading } from "@chakra-ui/react";
 interface IFormInput {
   username: string;
   email: string;
@@ -19,6 +19,7 @@ interface IFormInput {
 const RegisterPage = () => {
   //1-state
   const navigate = useNavigate();
+const { toast } = createStandaloneToast();
 
   //2-handler
   const {
@@ -31,19 +32,33 @@ const RegisterPage = () => {
   });
   const onSubmit: SubmitHandler<IFormInput> = async (data) => {
     try {
-      const { status, data: resData } = await axiosInstance.post(
+      const { status } = await axiosInstance.post(
         "/auth/local/register",
         data
       );
       if (status === 200) {
-        console.log("Done => ", resData);
+        
+        toast({
+          title: 'Success Login',
+          description: "Navigate To LoginPage",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
         setTimeout(() => {
           navigate("/login");
         }, 1000);
       }
     } catch (error) {
       const errorOBJ = error as AxiosError<IAxiosError>;
-      console.log(errorOBJ.response?.data.error.message);
+     toast({
+          title: 'Error Register',
+          description: `${errorOBJ}`,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
     }
   };
 

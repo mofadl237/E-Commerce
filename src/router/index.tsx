@@ -25,7 +25,7 @@ const router = createBrowserRouter(
         <Route
           index
           element={
-            <ProtectedRoute isAllowed={user} redirectPath="login">
+            <ProtectedRoute isAllowed={true} redirectPath="login">
               <HomePage />
             </ProtectedRoute>
           }
